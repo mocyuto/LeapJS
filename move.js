@@ -66,6 +66,17 @@ var frame;
 // Creates our Leap Controller
 var controller = new Leap.Controller({enableGestures:true});
 
+function openPicts(){
+    $(function(){$("#animeTarget").animate({left:"300px", top:"300px"})
+                .animate({left:"300px", top:"200px"}).stop();
+        }, function(){$("#animeTarget #rightTop2").animate({left:"20px",top:"300px"});
+        });
+}
+
+function movePicts(){
+    $(function() {$("div img#rightTop2").animate({left:"20px",top:"300px"});
+            });
+}
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
         // Assigning the data to the global frame object
@@ -77,15 +88,18 @@ controller.on( 'frame' , function( data ){
             var type = gesture.type;
             if (type == "keyTap") {
                 console.log("keyTap");
-                $(function(){$("#animeTarget").animate({left:"300px", top:"300px"});
-                    });
+                openPicts();
             }
             else if(type == "screenTap") {
                 console.log("screenTap");
                 $(function(){$("#animeTarget").animate({left:"0",top:"0"});
                     });
             } else if (type == "circle") {
-                console.log("circle");}
+                console.log("circle");
+            } else if (type=="swipe") {
+                console.log("swipe");
+            }
+
         }
 
         for( var i=0; i < frame.hands.length; i++ ){
@@ -96,44 +110,45 @@ controller.on( 'frame' , function( data ){
             // and get its position, so that it can be passed through
             // for drawing the connections
             //var handPos = leapToScene( frame , hand.palmPosition );
-            
+
+            count = 10000;
             // Loop through all the fingers of the hand we are on
             for( var j = 0; j < hand.fingers.length; j++ ){
-                
+
                 // Define the finger we are looking at
                 var finger = hand.fingers[j];
-                
+
                 // and get its position in Canvas
                 var fingerPos = leapToScene( frame , finger.tipPosition );
-                
+
                 /*
                   Draw the Finger
                 */
-                
+
                 // Setting up the style for the stroke
                 c.strokeStyle = "#39AECF";
                 c.lineWidth = 5;
-                
+
                 // Creating the path for the finger circle
                 c.beginPath();
-                
+
                 // Draw a full circle of radius 6 at the finger position
-                c.arc(fingerPos[0], fingerPos[1], 20, 0, Math.PI*2); 
-                
+                c.arc(fingerPos[0], fingerPos[1], 20, 0, Math.PI*2);
+
                 c.closePath();
                 c.stroke();
-                
             }
         }
-        
     });
 controller.connect();
 
 $(function () {
-        $("#animeTarget").hover(function(){
-                $(this).animate({left:"300px", top:"300px"});
-            }, function(){$(this).animate({left:"0",top:"0"});
-            });
+        $("#animeTarget").hover(
+                                function(){
+                                    //                                    openPicts();
+                                    movePicts();
+                                }
+                                );
     });
 
 
