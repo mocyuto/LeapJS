@@ -67,9 +67,13 @@ var frame;
 var controller = new Leap.Controller({enableGestures:true});
 
 function openPicts(){
-    $(function(){$("#animeTarget").animate({left:"300px", top:"300px"})
-                .animate({left:"300px", top:"200px"}).stop();
-        }, function(){$("#animeTarget #rightTop2").animate({left:"20px",top:"300px"});
+    $(function(){$("#animeTarget img")
+                .stop(true,true)
+                .animate({left:"300px", top:"300px"})
+                .animate({left:"300px", top:"200px"});
+        }, function(){$("#animeTarget")
+                   .stop(true,true)
+                   .animate({left:"20px",top:"300px"});
         });
 }
 
@@ -145,8 +149,7 @@ controller.connect();
 $(function () {
         $("#animeTarget").hover(
                                 function(){
-                                    //                                    openPicts();
-                                    movePicts();
+                                    openPicts();
                                 }
                                 );
     });
