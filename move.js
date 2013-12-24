@@ -80,14 +80,27 @@ function openPicts(){
                 .stop(true,true)
                 .animate({left:"310px",top:"310px"})
                 .animate({left:"350px"});
+        $("body").css("background-color","rgba(51, 51, 51, 0.8)");
+        $("img#pictBtn").stop(true,true).show();
         }, function(){$("#animeTarget")
-                   .stop(true,true)
-                   .animate({left:"20px",top:"300px"});
+                .animate({left:"350px"});
         });
 }
 
-function movePicts(){
-    $(function() {$("div img#rightTop2").animate({left:"20px",top:"300px"});
+function closePict(){
+    $(function() {
+            $("#animeTarget img#rightTop1")
+                .stop(true,true)
+                .animate({left:"5px", top:"5px"});
+            $("#animeTarget img#rightTop2")
+                .stop(true,true)
+                .animate({left:"10px", top:"10px"});
+            $("#animeTarget img#rightTop3")
+                .stop(true,true)
+                .animate({left:"15px",top:"15px"});
+        $("body")
+            .css("background-color","white");
+        $("img#pictBtn").css("display","none");
             });
 }
 // Tells the controller what to do every time it sees a frame
@@ -156,11 +169,15 @@ controller.on( 'frame' , function( data ){
 controller.connect();
 
 $(function () {
-        $("#animeTarget").hover(
-                                function(){
-                                    openPicts();
-                                }
-                                );
+    $("#animeTarget").hover(
+        function(){
+            openPicts();
+        }
+    );
+    $("#pictBtn").click(
+        function(){
+            closePict();
     });
+});
 
 
