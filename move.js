@@ -67,10 +67,19 @@ var frame;
 var controller = new Leap.Controller({enableGestures:true});
 
 function openPicts(){
-    $(function(){$("#animeTarget img")
+    $(function(){
+            $("#animeTarget img#rightTop1")
                 .stop(true,true)
                 .animate({left:"300px", top:"300px"})
-                .animate({left:"300px", top:"200px"});
+                .animate({left:"50px"});
+            $("#animeTarget img#rightTop2")
+                .stop(true,true)
+                .animate({left:"305px", top:"305px"})
+                .animate({left:"200px"});
+            $("#animeTarget img#rightTop3")
+                .stop(true,true)
+                .animate({left:"310px",top:"310px"})
+                .animate({left:"350px"});
         }, function(){$("#animeTarget")
                    .stop(true,true)
                    .animate({left:"20px",top:"300px"});
