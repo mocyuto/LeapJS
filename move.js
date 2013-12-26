@@ -67,19 +67,19 @@ var frame;
 var controller = new Leap.Controller({enableGestures:true});
 
 function openPicts(){
+    var leftPos = 300;
+    var topPos = 300;
+    var stopPos = 50;
     $(function(){
-            $("#animeTarget img#rightTop1")
+            for(i = 0; i < 3; i++) {
+                $("#animeTarget img#rightTop" + (i + 1))
                 .stop(true,true)
-                .animate({left:"300px", top:"300px"})
-                .animate({left:"50px"});
-            $("#animeTarget img#rightTop2")
-                .stop(true,true)
-                .animate({left:"305px", top:"305px"})
-                .animate({left:"200px"});
-            $("#animeTarget img#rightTop3")
-                .stop(true,true)
-                .animate({left:"310px",top:"310px"})
-                .animate({left:"350px"});
+                .animate({left:leftPos + "px", top:topPos + "px"})
+                .animate({left:stopPos + "px"});
+                leftPos += 5;
+                topPos += 5;
+                stopPos += 150;
+            }
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $("img#pictBtn").stop(true,true).show();
         }, function(){$("#animeTarget")
@@ -88,20 +88,20 @@ function openPicts(){
 }
 
 function closePict(){
+    var leftPos = 5;
+    var topPos = 5;
     $(function() {
-            $("#animeTarget img#rightTop1")
+            for (i = 0; i < 3; i++) {
+                $("#animeTarget img#rightTop" + (i + 1))
                 .stop(true,true)
-                .animate({left:"5px", top:"5px"});
-            $("#animeTarget img#rightTop2")
-                .stop(true,true)
-                .animate({left:"10px", top:"10px"});
-            $("#animeTarget img#rightTop3")
-                .stop(true,true)
-                .animate({left:"15px",top:"15px"});
+                .animate({left:leftPos + "px", top:topPos + "px"});
+                leftPos += 5;
+                topPos += 5;
+            }
         $("body")
             .css("background-color","white");
         $("img#pictBtn").css("display","none");
-            });
+        });
 }
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
