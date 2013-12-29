@@ -3,9 +3,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
     <script src="leap.min.js"></script>
-	
-	<style type="text/css">
-	  <!--
+    <script src="jquery.jplayer.min.js"></script>
+    <script src="jquery.jplayer.inspector.js"></script>
+
+    <style type="text/css">
+      <!--
           body {
           }
           #animeTarget img{
@@ -15,6 +17,12 @@
           width:100px;
           height:100px;
           background-color:blue;
+          }
+          #openTarget img{
+          position:absolute;
+          }
+          #opened img{
+          position:absolute;
           }
           #animeTarget img#rightTop2 {
           top:10px;
@@ -48,10 +56,19 @@
   <body>
     <img id="pictBtn" vertical-align="999" src="http://www.au.kddi.com/catalog/image/btn_modal_close.gif">
     <div id="animeTarget">
-      <img id="rightTop1" src="http://terrapin21.s502.xrea.com/wp-content/uploads/2013/03/hana3.png">
-      <img id="rightTop2" src="http://terrapin21.s502.xrea.com/wp-content/uploads/2013/03/hana3.png">
-      <img id="rightTop3" src="http://terrapin21.s502.xrea.com/wp-content/uploads/2013/03/hana3.png">
+      <img id="rightTop1" src="hana3.png">
+      <img id="rightTop2" src="hana3.png">
+      <img id="rightTop3" src="hana3.png">
+      <img id="rightTop4" src="hana3.png">
+      <img id="rightTop5" src="hana3.png">
+      <img id="rightTop6" src="hana3.png">
+      <img id="rightTop7" src="hana3.png">
+      <img id="rightTop8" src="hana3.png">
+      <img id="rightTop9" src="hana3.png">
+      <img id="rightTop10" src="hana3.png">
+      <img id="rightTop11" src="hana3.png">
     </div>
+    <div id="videos"></div>
     <canvas id="canvas"></canvas>
     <script src="move.js"></script>
 <!--    <script src="leapScene.js"></script> -->

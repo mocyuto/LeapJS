@@ -66,42 +66,45 @@ var frame;
 // Creates our Leap Controller
 var controller = new Leap.Controller({enableGestures:true});
 
-function openPicts(){
+function openPicts(pictId, length){
+    pictId = "#" + pictId;
     var leftPos = 300;
     var topPos = 300;
     var stopPos = 50;
     $(function(){
-            for(i = 0; i < 3; i++) {
-                $("#animeTarget img#rightTop" + (i + 1))
+        for(i = 0; i < length; i++) {
+            console.log(pictId);
+            $(pictId + " img#rightTop" + (i + 1))
                 .stop(true,true)
                 .animate({left:leftPos + "px", top:topPos + "px"})
                 .animate({left:stopPos + "px"});
-                leftPos += 5;
-                topPos += 5;
-                stopPos += 150;
-            }
+            leftPos += 5;
+            topPos += 5;
+            stopPos += 150;
+        }
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $("img#pictBtn").stop(true,true).show();
-        }, function(){$("#animeTarget")
-                .animate({left:"350px"});
         });
 }
 
-function closePict(){
+function closePict(startId, length){
+    startId = "#" + startId;
     var leftPos = 5;
     var topPos = 5;
     $(function() {
-            for (i = 0; i < 3; i++) {
-                $("#animeTarget img#rightTop" + (i + 1))
+        for (i = 0; i < length; i++) {
+            $(startId + " img#rightTop" + (i + 1))
                 .stop(true,true)
                 .animate({left:leftPos + "px", top:topPos + "px"});
+            if (i <4) {
                 leftPos += 5;
                 topPos += 5;
             }
+        }
         $("body")
             .css("background-color","white");
         $("img#pictBtn").css("display","none");
-        });
+    });
 }
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
@@ -168,15 +171,40 @@ controller.on( 'frame' , function( data ){
     });
 controller.connect();
 
+// http://www.jplayer.org/latest/developer-guide/#jPlayer-option-ready
+function startMovie(){
+    $(document).ready(function(){
+        $("#videos").jPlayer({
+            ready: function () {
+                $(this).jPlayer("setMedia", {
+                    m4v: "test.m4v"
+                });
+            },
+            swfPath: "/js",
+            supplied: "m4v"
+        });
+    });
+}
+
 $(function () {
-    $("#animeTarget").hover(
+    var pictId = "openTarget";
+    var openedId = "opened";
+    var startId = "animeTarget";
+    $("#"+startId).hover(
         function(){
-            openPicts();
+            $("#"+startId).attr("id",pictId);
+            var len = $("#" + pictId + " *").length;
+            openPicts(pictId, len);
+            $("#"+pictId).attr("id",openedId);
         }
     );
     $("#pictBtn").click(
         function(){
-            closePict();
+            var len = $("#" +openedId + " *").length;
+            closePict(openedId, len);
+            setTimeout(function(){
+                $("#"+openedId).attr("id", startId)
+            },800)
     });
 });
 
