@@ -1,0 +1,4 @@
+AddType video/ogg .ogg .ogv
+AddType video/mp4 .mp4
+AddType application/ogg .ogg .ogv
+AddType video/mv4 .mv4
