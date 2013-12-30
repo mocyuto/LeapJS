@@ -73,8 +73,7 @@ function openPicts(pictId, length){
     var stopPos = 50;
     $(function(){
         for(i = 0; i < length; i++) {
-            console.log(pictId);
-            $(pictId + " img#rightTop" + (i + 1))
+            $(pictId + " img#leftTop" + (i + 1))
                 .stop(true,true)
                 .animate({left:leftPos + "px", top:topPos + "px"})
                 .animate({left:stopPos + "px"});
@@ -93,16 +92,55 @@ function closePict(startId, length){
     var topPos = 5;
     $(function() {
         $("body")
+            .stop(true,true)
             .css("background-color","white");
         $("img#pictBtn").css("display","none");
         for (i = 0; i < length; i++) {
-            $(startId + " img#rightTop" + (i + 1))
+            $(startId + " img#leftTop" + (i + 1))
                 .animate({left:leftPos + "px", top:topPos + "px"});
             if (i <4) {
                 leftPos += 5;
                 topPos += 5;
             }
         }
+    });
+}
+
+function showMovie(thumbId, className, cancelBtn){
+    var leftPos = 300;
+    var topPos = 300;
+    $(function(){
+        $(thumbId)
+            .stop(true,true)
+            .animate({left:leftPos, top:topPos,width:"300",height:"300"});
+        setTimeout(
+            function() {
+                $(cancelBtn)
+                    .stop(true,true)
+                    .addClass(className)
+                    .css({left:leftPos+640,top:100})
+                    .show();
+                $(thumbId).css("display","none");
+                $("video").css({visibility:"visible"});
+            },500);
+        $("body").css("background-color","rgba(51, 51, 51, 0.8)");
+    });
+}
+
+function closeMovie(className, thumbId, cancelBtn) {
+    var leftPos = 940;
+    var topPos = 10;
+    $(function() {
+        $("body")
+            .stop(true,true)
+            .css("background-color","white");
+        $(cancelBtn)
+            .css("display","none")
+            .removeClass(className);
+        $("video").css("visibility","hidden");
+        $(thumbId)
+            .show()
+            .animate({left:leftPos, top:topPos,width:"100",height:"100"});
     });
 }
 // Tells the controller what to do every time it sees a frame
@@ -176,11 +214,13 @@ function startMovie(){
         $("#videos").jPlayer({
             ready: function () {
                 $(this).jPlayer("setMedia", {
-                    m4v: "test.m4v"
+                    m4v: "test.m4v",
+                    ogv: "test.ogg",
+                    webmv: "test.webm"
                 });
             },
-            swfPath: "/js",
-            supplied: "m4v"
+            swfPath: "../video",
+            supplied: "m4v, ogv, webmv"
         });
         $("#inspector").jPlayerInspector({jPlayer:$("#jquery_jplayer_1")});
     });
@@ -190,8 +230,10 @@ $(function () {
     var pictId = "openTarget";
     var openedId = "opened";
     var startId = "animeTarget";
-    startMovie();
-    $("#"+startId).hover(
+    var thumbId = "#rightTop";
+    var className = "movie";
+    var cancelBtn = "img#pictBtn"
+    $("#"+startId).click(
         function(){
             $("#"+startId).attr("id",pictId);
             var len = $("#" + pictId + " *").length;
@@ -199,11 +241,21 @@ $(function () {
             $("#"+pictId).attr("id",openedId);
         }
     );
-    $("#pictBtn").click(
+    $(cancelBtn).click(
         function(){
-            var len = $("#" +openedId + " *").length;
-            closePict(openedId, len);
-            $("#"+openedId).attr("id", startId);
+            if ($(cancelBtn).hasClass(className)) {
+                closeMovie(className,thumbId, cancelBtn);
+                console.log("test");
+            } else {
+                var len = $("#" +openedId + " *").length;
+                closePict(openedId, len);
+                $("#"+openedId).attr("id", startId);
+            }
+        }
+    );
+    $(thumbId).click(
+        function(){
+            showMovie(thumbId, className, cancelBtn);
         }
     );
 });

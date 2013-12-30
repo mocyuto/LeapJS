@@ -25,12 +25,12 @@
           #opened img{
           position:absolute;
           }
-          #animeTarget img#rightTop2 {
+          #animeTarget img#leftTop2 {
           top:10px;
           left:10px;
           background-color:yellow;
           }
-          #animeTarget img#rightTop3 {
+          #animeTarget img#leftTop3 {
           top:15px;
           left:15px;
           background-color:black;
@@ -43,12 +43,21 @@
           height:35px;
           display:none;
           }
+          img#rightTop{
+          position:absolute;
+          top:0px;
+          left:1000px;
+          }
           #canvas{
           width:100%;
           height:100%;
           background-color: rgba(255,255,255,0.1);
           }
-
+          video {
+          visibility:hidden;
+          position:absolute;
+          left:300px;
+          }
         -->
     </style>
 
@@ -57,24 +66,27 @@
   <body>
     <img id="pictBtn" vertical-align="999" src="http://www.au.kddi.com/catalog/image/btn_modal_close.gif">
     <div id="animeTarget">
-      <img id="rightTop1" src="hana3.png">
-      <img id="rightTop2" src="hana3.png">
-      <img id="rightTop3" src="hana3.png">
-      <img id="rightTop4" src="hana3.png">
-      <img id="rightTop5" src="hana3.png">
-      <img id="rightTop6" src="hana3.png">
-      <img id="rightTop7" src="hana3.png">
-      <img id="rightTop8" src="hana3.png">
-      <img id="rightTop9" src="hana3.png">
-      <img id="rightTop10" src="hana3.png">
-      <img id="rightTop11" src="hana3.png">
+      <img id="leftTop1" src="hana3.png">
+      <img id="leftTop2" src="hana3.png">
+      <img id="leftTop3" src="hana3.png">
+      <img id="leftTop4" src="hana3.png">
+      <img id="leftTop5" src="hana3.png">
+      <img id="leftTop6" src="hana3.png">
+      <img id="leftTop7" src="hana3.png">
+      <img id="leftTop8" src="hana3.png">
+      <img id="leftTop9" src="hana3.png">
+      <img id="leftTop10" src="hana3.png">
+      <img id="leftTop11" src="hana3.png">
     </div>
-    <video src="video/test.m4v">
-      <p>動画を再生するにはvideoタグをサポートしたブラウザが必要です。</p>
+    <img id="rightTop" src="hana3.png">
+    <video autoplay controls width="640" height="400">
+      <source src="video/test.ogg">
+        <source src="video/test.m4v">
+          <source src="video/test.webm">
+            <p>動画を再生するにはvideoタグをサポートしたブラウザが必要です。</p>
     </video>
     <canvas id="canvas"></canvas>
     <script src="js/move.js"></script>
-    <!-- <div id="videos"></div> -->
     <!--    <script src="leapScene.js"></script> -->
   </body>
 </html>
