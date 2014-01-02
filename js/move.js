@@ -122,6 +122,9 @@ function showMovie(thumbId, className, cancelBtn){
                     .show();
                 $(thumbId).css("display","none");
                 $("video").css({visibility:"visible"});
+                var video = $('video').get(0);
+                video.currentTime = 0;
+                video.play();
             },500);
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
     });
@@ -154,7 +157,7 @@ controller.on( 'frame' , function( data ){
             var type = gesture.type;
             if (type == "keyTap") {
                 console.log("keyTap");
-                openPicts();
+                showMovie("#rightTop","movie","img#pictBtn");
             }
             else if(type == "screenTap") {
                 console.log("screenTap");
@@ -209,6 +212,7 @@ controller.on( 'frame' , function( data ){
 controller.connect();
 
 // http://www.jplayer.org/latest/developer-guide/#jPlayer-option-ready
+// did not use this function
 function startMovie(){
     $(document).ready(function(){
         $("#videos").jPlayer({
