@@ -8,7 +8,6 @@ canvas.height = canvas.clientHeight;
 // Create the context we will use for drawing
 var c =  canvas.getContext('2d');
 
-
 /*
 
  The leapToScene function takes a position in leap space
@@ -66,14 +65,26 @@ var frame;
 // Creates our Leap Controller
 var controller = new Leap.Controller({enableGestures:true});
 
-function openPicts(pictId, length){
-    pictId = "#" + pictId;
+// html tags
+var htmlTags = {
+    pictId:"openTarget",
+    thumbImg:"img#leftTop",
+    openedId:"opened",
+    startId:"animeTarget",
+    thumbId:"#rightTop",
+    movieClass:"video",
+    cancelBtn:"img#cancelBtn"
+}
+
+function openPicts(tags){
+    var pictId = "#" + tags.pictId;
+    var length = $(pictId + " *").length;
     var leftPos = 300;
     var topPos = 300;
     var stopPos = 50;
     $(function(){
         for(i = 0; i < length; i++) {
-            $(pictId + " img#leftTop" + (i + 1))
+            $(pictId + " " + tags.thumbImg + (i + 1))
                 .stop(true,true)
                 .animate({left:leftPos + "px", top:topPos + "px"})
                 .animate({left:stopPos + "px"});
@@ -82,21 +93,22 @@ function openPicts(pictId, length){
             stopPos += 150;
         }
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
-        $("img#pictBtn").stop(true,true).show();
+        $(tags.cancelBtn).stop(true,true).show();
         });
 }
 
-function closePict(startId, length){
-    startId = "#" + startId;
+function closePict(tags){
+    var startId = "#" + tags.startId;
+    var length = $("#" + tags.openedId + " *").length;
     var leftPos = 5;
     var topPos = 5;
     $(function() {
         $("body")
             .stop(true,true)
             .css("background-color","white");
-        $("img#pictBtn").css("display","none");
+        $(tags.cancelBtn).css("display","none");
         for (i = 0; i < length; i++) {
-            $(startId + " img#leftTop" + (i + 1))
+            $(startId + " "+ tags.thumbImg + (i + 1))
                 .animate({left:leftPos + "px", top:topPos + "px"});
             if (i <4) {
                 leftPos += 5;
@@ -106,21 +118,21 @@ function closePict(startId, length){
     });
 }
 
-function showMovie(thumbId, className, cancelBtn){
+function showMovie(tags){
     var leftPos = 300;
     var topPos = 300;
     $(function(){
-        $(thumbId)
+        $(tags.thumbId)
             .stop(true,true)
             .animate({left:leftPos, top:topPos,width:"300",height:"300"});
         setTimeout(
             function() {
-                $(cancelBtn)
+                $(tags.cancelBtn)
                     .stop(true,true)
-                    .addClass(className)
+                    .addClass(tags.movieClass)
                     .css({left:leftPos+640,top:100})
                     .show();
-                $(thumbId).css("display","none");
+                $(tags.thumbId).css("display","none");
                 $("video").css({visibility:"visible"});
                 var video = $('video').get(0);
                 video.currentTime = 0;
@@ -130,87 +142,160 @@ function showMovie(thumbId, className, cancelBtn){
     });
 }
 
-function closeMovie(className, thumbId, cancelBtn) {
+function closeMovie(tags) {
     var leftPos = 940;
     var topPos = 10;
     $(function() {
         $("body")
             .stop(true,true)
             .css("background-color","white");
-        $(cancelBtn)
+        $(tags.cancelBtn)
             .css("display","none")
-            .removeClass(className);
+            .removeClass(tags.movieClass);
         $("video").css("visibility","hidden");
-        $(thumbId)
+        $(tags.thumbId)
             .show()
             .animate({left:leftPos, top:topPos,width:"100",height:"100"});
     });
 }
+
+var hoverCount = {
+    cancelMovie:0,
+    cancelPict: 0,
+    showMovie: 0,
+    showPict: 0
+}
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
-        // Assigning the data to the global frame object
-        frame = data;
-        // Clearing the drawing from the previous frame
-        c.clearRect( 0 , 0 , width , height );
-        for( var i = 0; i < frame.gestures.length; i++ ){
-            var gesture = frame.gestures[i];
-            var type = gesture.type;
-            if (type == "keyTap") {
-                console.log("keyTap");
-                showMovie("#rightTop","movie","img#pictBtn");
-            }
-            else if(type == "screenTap") {
-                console.log("screenTap");
-                $(function(){$("#animeTarget").animate({left:"0",top:"0"});
-                    });
-            } else if (type == "circle") {
-                console.log("circle");
-            } else if (type=="swipe") {
-                console.log("swipe");
-            }
-
+    // Assigning the data to the global frame object
+    frame = data;
+    // Clearing the drawing from the previous frame
+    c.clearRect( 0 , 0 , width , height );
+    /*
+    for( var i = 0; i < frame.gestures.length; i++ ){
+        console.log("2");
+        var gesture = frame.gestures[i];
+        var type = gesture.type;
+        if (type === "keyTap") {
+            console.log("keyTap");
+            showMovie("#rightTop","movie","img#cancelBtn");
+        }
+        else if(type === "screenTap") {
+            console.log("screenTap");
+            $(function(){$("#animeTarget").animate({left:"0",top:"0"});
+                        });
+        } else if (type === "circle") {
+            console.log("circle");
+        } else if (type==="swipe") {
+            console.log("swipe");
         }
 
-        for( var i=0; i < frame.hands.length; i++ ){
+    }
+     */
 
-            // For each hand we define it
-            var hand = frame.hands[i];
+    for( var i=0; i < frame.hands.length; i++ ){
 
-            // and get its position, so that it can be passed through
-            // for drawing the connections
-            //var handPos = leapToScene( frame , hand.palmPosition );
+        // For each hand we define it
+        var hand = frame.hands[i];
 
-            count = 10000;
-            // Loop through all the fingers of the hand we are on
-            for( var j = 0; j < hand.fingers.length; j++ ){
+        // and get its position, so that it can be passed through
+        // for drawing the connections
+        //var handPos = leapToScene( frame , hand.palmPosition );
 
-                // Define the finger we are looking at
-                var finger = hand.fingers[j];
+        // Loop through all the fingers of the hand we are on
+        for( var j = 0; j < hand.fingers.length; j++ ){
 
-                // and get its position in Canvas
-                var fingerPos = leapToScene( frame , finger.tipPosition );
+            // Define the finger we are looking at
+            var finger = hand.fingers[j];
 
-                /*
-                  Draw the Finger
-                */
-
-                // Setting up the style for the stroke
-                c.strokeStyle = "#39AECF";
-                c.lineWidth = 5;
-
-                // Creating the path for the finger circle
-                c.beginPath();
-
-                // Draw a full circle of radius 6 at the finger position
-                c.arc(fingerPos[0], fingerPos[1], 20, 0, Math.PI*2);
-
-                c.closePath();
-                c.stroke();
+            // and get its position in Canvas
+            var fingerPos = leapToScene( frame , finger.tipPosition );
+            // cancelBtn position
+            function touchObject(tag,cancel){
+                var id = tag;
+                return {
+                    tags:{
+                        left: +$(id).css("left").slice(0,-2),
+                        top: +$(id).css("top").slice(0,-2),
+                        width: +$(id).width(),
+                        height:+$(id).height(),
+                        status: function(){
+                            var display = $(id).css("display");
+                            if (display.length === 0){
+                                if ($(id).css("visibility")==="hidden"&&!cancel
+                                   ||$(id).css("visibility")==="visible"&&cancel){return true;}
+                                else {return false;}
+                            } else {
+                                if (display==="none"&&!cancel
+                                   ||display!=="none"&&cancel){return true;}
+                                else {return false;}
+                            }
+                        }
+                    }
+                };
             }
+            var cancelBtn = new touchObject(htmlTags.cancelBtn,"true");
+            var movieThumb = new touchObject(htmlTags.thumbId,"false");
+            $("#point").text(Math.round(fingerPos[0])+": "+cancelBtn.tags.left+", "
+                             +Math.round(fingerPos[1])+": "+ cancelBtn.tags.top);
+
+            // show movie
+            hoverCount.showMovie += hoverCounter(c, fingerPos, movieThumb.tags, hoverCount.showMovie);
+            if (hoverCount.showMovie === 0) {
+                for (var cnt in hoverCount){
+                    hoverCount.cnt = 0;
+                }
+            } else if (hoverCount.showMovie > 50 ){
+                showMovie(htmlTags);
+                hoverCount.showMovie = 0;
+            }
+
+            // cancelMovie
+            hoverCount.cancelMovie += hoverCounter(c, fingerPos, cancelBtn.tags, hoverCount.cancelMovie);
+            if (hoverCount.cancelMovie === 0) {
+                for (var cnt in hoverCount){
+                    cnt = 0;
+                }
+            } else if (hoverCount.cancelMovie > 50 ){
+                closeMovie(htmlTags);
+                hoverCount.cancelMovie = 0;
+            }
+
+            /*
+             Draw the Finger
+             */
+
+            // Setting up the style for the stroke
+            c.strokeStyle = "#39AECF";
+            c.lineWidth = 5;
+            // Creating the path for the finger circle
+            c.beginPath();
+            // Draw a full circle of radius 6 at the finger position
+            c.arc(fingerPos[0], fingerPos[1], 20, 0, Math.PI*2);
+            c.closePath();
+            c.stroke();
         }
-    });
+    }
+});
 controller.connect();
 
+function hoverCounter(canvasInstance, fingerPos, touchObj, touchCount){
+    if (touchObj.left < fingerPos[0]
+        && fingerPos[0] < touchObj.left + touchObj.width
+        && touchObj.top < fingerPos[1]
+        && fingerPos[1] + 0 < touchObj.top + touchObj.height
+        && touchObj.status()) {
+        canvasInstance.strokeStyle = "#000";
+        canvasInstance.lineWidth = 5;
+        // Creating the path for the finger circle
+        canvasInstance.beginPath();
+        // Draw a full circle of radius 6 at the finger position
+        canvasInstance.arc(fingerPos[0], fingerPos[1], 25, 0, Math.PI*touchCount/25);
+        canvasInstance.stroke();
+        return 1;
+    }
+    return 0;
+}
 // http://www.jplayer.org/latest/developer-guide/#jPlayer-option-ready
 // did not use this function
 function startMovie(){
@@ -231,35 +316,26 @@ function startMovie(){
 }
 
 $(function () {
-    var pictId = "openTarget";
-    var openedId = "opened";
-    var startId = "animeTarget";
-    var thumbId = "#rightTop";
-    var className = "movie";
-    var cancelBtn = "img#pictBtn"
-    $("#"+startId).click(
+    $("#"+htmlTags.startId).click(
         function(){
-            $("#"+startId).attr("id",pictId);
-            var len = $("#" + pictId + " *").length;
-            openPicts(pictId, len);
-            $("#"+pictId).attr("id",openedId);
+            $("#"+htmlTags.startId).attr("id",htmlTags.pictId);
+            openPicts(htmlTags);
+            $("#"+htmlTags.pictId).attr("id",htmlTags.openedId);
         }
     );
-    $(cancelBtn).click(
+    $(htmlTags.cancelBtn).click(
         function(){
-            if ($(cancelBtn).hasClass(className)) {
-                closeMovie(className,thumbId, cancelBtn);
-                console.log("test");
+            if ($(htmlTags.cancelBtn).hasClass(htmlTags.movieClass)) {
+                closeMovie(htmlTags);
             } else {
-                var len = $("#" +openedId + " *").length;
-                closePict(openedId, len);
-                $("#"+openedId).attr("id", startId);
+                closePict(htmlTags);
+                $("#"+htmlTags.openedId).attr("id", htmlTags.startId);
             }
         }
     );
-    $(thumbId).click(
+    $(htmlTags.thumbId).click(
         function(){
-            showMovie(thumbId, className, cancelBtn);
+            showMovie(htmlTags);
         }
     );
 });

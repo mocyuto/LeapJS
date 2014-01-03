@@ -35,7 +35,7 @@
           left:15px;
           background-color:black;
           }
-          img#pictBtn {
+          img#cancelBtn {
           position:absolute;
           top:180px;
           left:700px;
@@ -47,6 +47,8 @@
           position:absolute;
           top:0px;
           left:1000px;
+          width:100px;
+          height:100px;
           }
           #canvas{
           position:absolute;
@@ -66,7 +68,7 @@
 
   <body>
     <canvas id="canvas"></canvas>
-    <img id="pictBtn" vertical-align="999" src="http://www.au.kddi.com/catalog/image/btn_modal_close.gif">
+    <img id="cancelBtn" vertical-align="999" src="http://www.au.kddi.com/catalog/image/btn_modal_close.gif">
     <div id="animeTarget">
       <img id="leftTop1" src="hana3.png">
       <img id="leftTop2" src="hana3.png">
@@ -87,7 +89,9 @@
           <source src="video/test.webm">
             <p>動画を再生するにはvideoタグをサポートしたブラウザが必要です。</p>
     </video>
+    <div style="position:absolute;top:300px;">Finger:<span id="point"></span></div>
     <script src="js/move.js"></script>
+    <script src="js/lib/pointable.js"></script>
     <!--    <script src="leapScene.js"></script> -->
   </body>
 </html>
