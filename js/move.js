@@ -67,17 +67,18 @@ var controller = new Leap.Controller({enableGestures:true});
 
 // html tags
 var htmlTags = {
-    pictId:"openTarget",
     thumbImg:"img#leftTop",
     openedId:"opened",
-    startId:"animeTarget",
+    pictFirstId:"animeTarget",
+    pictSecondId:"openTarget",
     thumbId:"#rightTop",
     movieClass:"video",
     cancelBtn:"img#cancelBtn"
 }
 
 function openPicts(tags){
-    var pictId = "#" + tags.pictId;
+    $("#"+ tags.pictFirstId).attr("id", tags.pictSecondId);
+    var pictId = "#" + tags.pictSecondId;
     var length = $(pictId + " *").length;
     var leftPos = 300;
     var topPos = 300;
@@ -94,12 +95,13 @@ function openPicts(tags){
         }
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $(tags.cancelBtn).stop(true,true).show();
-        });
+    });
+    $("#"+tags.pictSecondId).attr("id",tags.openedId);
 }
 
 function closePict(tags){
-    var startId = "#" + tags.startId;
-    var length = $("#" + tags.openedId + " *").length;
+    var imgId = "#" + tags.openedId;
+    var length = $(imgId + " *").length;
     var leftPos = 5;
     var topPos = 5;
     $(function() {
@@ -108,7 +110,7 @@ function closePict(tags){
             .css("background-color","white");
         $(tags.cancelBtn).css("display","none");
         for (i = 0; i < length; i++) {
-            $(startId + " "+ tags.thumbImg + (i + 1))
+            $(imgId + " "+ tags.thumbImg + (i + 1))
                 .animate({left:leftPos + "px", top:topPos + "px"});
             if (i <4) {
                 leftPos += 5;
@@ -116,6 +118,7 @@ function closePict(tags){
             }
         }
     });
+    $("#"+tags.openedId).attr("id", tags.pictFirstId);
 }
 
 function showMovie(tags){
@@ -160,11 +163,10 @@ function closeMovie(tags) {
 }
 
 var hoverCount = {
-    cancelMovie:0,
-    cancelPict: 0,
+    cancel:0,
     showMovie: 0,
     showPict: 0
-}
+};
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
     // Assigning the data to the global frame object
@@ -213,6 +215,7 @@ controller.on( 'frame' , function( data ){
             // cancelBtn position
             function touchObject(tag,cancel){
                 var id = tag;
+                if($(id).length===0){return {};}
                 return {
                     tags:{
                         left: +$(id).css("left").slice(0,-2),
@@ -236,31 +239,43 @@ controller.on( 'frame' , function( data ){
             }
             var cancelBtn = new touchObject(htmlTags.cancelBtn,"true");
             var movieThumb = new touchObject(htmlTags.thumbId,"false");
+            var pictThumb = new touchObject("#"+htmlTags.pictFirstId + " "+ htmlTags.thumbImg + "1","false");
             $("#point").text(Math.round(fingerPos[0])+": "+cancelBtn.tags.left+", "
                              +Math.round(fingerPos[1])+": "+ cancelBtn.tags.top);
 
+            // show Pict
+            var showPictCount = hoverCounter(c, fingerPos, pictThumb.tags, hoverCount.showPict);
+            hoverCount.showPict += showPictCount;
+            if (hoverCount.showPict > 50 ){
+                openPicts(htmlTags);
+                hoverCount.showPict = 0;
+            }
+
             // show movie
-            hoverCount.showMovie += hoverCounter(c, fingerPos, movieThumb.tags, hoverCount.showMovie);
-            if (hoverCount.showMovie === 0) {
-                for (var cnt in hoverCount){
-                    hoverCount.cnt = 0;
-                }
-            } else if (hoverCount.showMovie > 50 ){
+            var showMovieCount = hoverCounter(c, fingerPos, movieThumb.tags, hoverCount.showMovie);
+            hoverCount.showMovie += showMovieCount;
+            if (hoverCount.showMovie > 50 ){
                 showMovie(htmlTags);
                 hoverCount.showMovie = 0;
             }
 
             // cancelMovie
-            hoverCount.cancelMovie += hoverCounter(c, fingerPos, cancelBtn.tags, hoverCount.cancelMovie);
-            if (hoverCount.cancelMovie === 0) {
-                for (var cnt in hoverCount){
-                    cnt = 0;
-                }
-            } else if (hoverCount.cancelMovie > 50 ){
+            var cancelCount = hoverCounter(c, fingerPos, cancelBtn.tags, hoverCount.cancel);
+            hoverCount.cancel += cancelCount;
+            if (hoverCount.cancel > 50 ){
                 closeMovie(htmlTags);
-                hoverCount.cancelMovie = 0;
+                closePict(htmlTags);
+                hoverCount.cancel = 0;
             }
-
+            if (showMovieCount === 0
+                &&showPictCount === 0
+                &&cancelCount === 0) {
+                for (var cnt in hoverCount){
+                    if (hoverCount.hasOwnProperty(cnt)){
+                        hoverCount[cnt] = 0;
+                    }
+                }
+            }
             /*
              Draw the Finger
              */
@@ -280,6 +295,7 @@ controller.on( 'frame' , function( data ){
 controller.connect();
 
 function hoverCounter(canvasInstance, fingerPos, touchObj, touchCount){
+    if(touchObj===undefined){return 0;}
     if (touchObj.left < fingerPos[0]
         && fingerPos[0] < touchObj.left + touchObj.width
         && touchObj.top < fingerPos[1]
@@ -316,11 +332,11 @@ function startMovie(){
 }
 
 $(function () {
-    $("#"+htmlTags.startId).click(
+    $("#"+htmlTags.pictFirstId).click(
         function(){
-            $("#"+htmlTags.startId).attr("id",htmlTags.pictId);
+//            $("#"+htmlTags.pictFirstId).attr("id",htmlTags.pictSecondId);
             openPicts(htmlTags);
-            $("#"+htmlTags.pictId).attr("id",htmlTags.openedId);
+//            $("#"+htmlTags.pictSecondId).attr("id",htmlTags.openedId);
         }
     );
     $(htmlTags.cancelBtn).click(
@@ -328,8 +344,9 @@ $(function () {
             if ($(htmlTags.cancelBtn).hasClass(htmlTags.movieClass)) {
                 closeMovie(htmlTags);
             } else {
+                console.log("picture close");
                 closePict(htmlTags);
-                $("#"+htmlTags.openedId).attr("id", htmlTags.startId);
+//                $("#"+htmlTags.openedId).attr("id", htmlTags.pictFirstId);
             }
         }
     );
