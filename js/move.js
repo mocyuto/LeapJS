@@ -90,7 +90,6 @@ function openPicts(tags){
                 .animate({left:leftPos + "px", top:topPos + "px"})
                 .animate({left:stopPos + "px"});
             leftPos += 5;
-            topPos += 5;
             stopPos += 150;
         }
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
