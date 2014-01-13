@@ -76,6 +76,15 @@ var htmlTags = {
     cancelBtn:"img#cancelBtn"
 }
 
+var hoverCount = {
+    cancel:0,
+    showMovie: 0,
+    showPict: 0
+};
+
+// This is how long does it wait to act event.
+var waitCount = 25;
+
 function openPicts(tags){
     $("#"+ tags.pictFirstId).attr("id", tags.pictSecondId);
     var pictId = "#" + tags.pictSecondId;
@@ -84,6 +93,11 @@ function openPicts(tags){
     var topPos = 300;
     var stopPos = 50;
     $(function(){
+        $(pictId)
+            .stop(true,true)
+            .animate({top:topPos + "px"});
+
+        /*
         for(i = 0; i < length; i++) {
             $(pictId + " " + tags.thumbImg + (i + 1))
                 .stop(true,true)
@@ -91,11 +105,13 @@ function openPicts(tags){
                 .animate({left:stopPos + "px"});
             leftPos += 5;
             stopPos += 150;
-        }
+        }*/
+
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $(tags.cancelBtn).stop(true,true).show();
     });
-    $("#"+tags.pictSecondId).attr("id",tags.openedId);
+    $(pictId).attr("id",tags.openedId)
+        .css({width:"100%", height:"150px"});
 }
 
 function closePict(tags){
@@ -117,7 +133,11 @@ function closePict(tags){
             }
         }
     });
-    $("#"+tags.openedId).attr("id", tags.pictFirstId);
+    $("#"+tags.openedId)
+        .animate({top:"0px",width:leftPos + "px"})
+        .attr("id", tags.pictFirstId)
+        .css({position:"absolute"});
+
 }
 
 function showMovie(tags){
@@ -145,7 +165,7 @@ function showMovie(tags){
 }
 
 function closeMovie(tags) {
-    var leftPos = 940;
+    var leftPos = 1000;
     var topPos = 10;
     $(function() {
         $("body")
@@ -161,11 +181,6 @@ function closeMovie(tags) {
     });
 }
 
-var hoverCount = {
-    cancel:0,
-    showMovie: 0,
-    showPict: 0
-};
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
     // Assigning the data to the global frame object
@@ -206,19 +221,26 @@ controller.on( 'frame' , function( data ){
         // Loop through all the fingers of the hand we are on
         for( var j = 0; j < hand.fingers.length; j++ ){
 
+            // finger touch some object or not
+            var isTouch = false;
+
             // Define the finger we are looking at
             var finger = hand.fingers[j];
 
             // and get its position in Canvas
             var fingerPos = leapToScene( frame , finger.tipPosition );
-            // cancelBtn position
+            // object position
             function touchObject(tag,cancel){
                 var id = tag;
                 if($(id).length===0){return {};}
                 return {
                     tags:{
+                        /*
                         left: +$(id).css("left").slice(0,-2),
                         top: +$(id).css("top").slice(0,-2),
+                         */
+                        left: +$(id).offset().left,
+                        top: +$(id).offset().top,
                         width: +$(id).width(),
                         height:+$(id).height(),
                         status: function(){
@@ -236,45 +258,71 @@ controller.on( 'frame' , function( data ){
                     }
                 };
             }
-            var cancelBtn = new touchObject(htmlTags.cancelBtn,"true");
-            var movieThumb = new touchObject(htmlTags.thumbId,"false");
-            var pictThumb = new touchObject("#"+htmlTags.pictFirstId + " "+ htmlTags.thumbImg + "1","false");
-            $("#point").text(Math.round(fingerPos[0])+": "+cancelBtn.tags.left+", "
-                             +Math.round(fingerPos[1])+": "+ cancelBtn.tags.top);
 
             // show Pict
+            var pictThumb = new touchObject("#"+htmlTags.pictFirstId + " "+ htmlTags.thumbImg + "1","false");
             var showPictCount = hoverCounter(c, fingerPos, pictThumb.tags, hoverCount.showPict);
             hoverCount.showPict += showPictCount;
-            if (hoverCount.showPict > 50 ){
+            if (showPictCount===1){isTouch=true;}
+            if (hoverCount.showPict > waitCount ){
+                console.log("hover to open");
                 openPicts(htmlTags);
                 hoverCount.showPict = 0;
             }
 
+            // popup Pict
+            var pictId = "#" + htmlTags.openedId;
+            var length = $(pictId + " img").length;
+            var popupTag = "popupPict";
+            for (var k = 0; k < length; k++){
+                var pict = new touchObject(pictId + " " + htmlTags.thumbImg + (k+1),"false");
+                var popupPictCount = hoverCounter(c, fingerPos, pict.tags, hoverCount[popupTag+k]);
+                if (popupPictCount===1){isTouch=true;}
+                hoverCount[popupTag+k] += popupPictCount;
+                if (hoverCount[popupTag+k] > waitCount ){
+                    $(pictId+ " " + htmlTags.thumbImg + (k+1)).click();
+                    hoverCount[popupTag+k] = 0;
+                }
+            }
+
             // show movie
+            var movieThumb = new touchObject(htmlTags.thumbId,"false");
             var showMovieCount = hoverCounter(c, fingerPos, movieThumb.tags, hoverCount.showMovie);
             hoverCount.showMovie += showMovieCount;
-            if (hoverCount.showMovie > 50 ){
+            if (showMovieCount===1){isTouch=true;}
+            if (hoverCount.showMovie > waitCount ){
                 showMovie(htmlTags);
                 hoverCount.showMovie = 0;
             }
 
             // cancelMovie
+            var cancelBtn = new touchObject(htmlTags.cancelBtn,"true");
             var cancelCount = hoverCounter(c, fingerPos, cancelBtn.tags, hoverCount.cancel);
             hoverCount.cancel += cancelCount;
-            if (hoverCount.cancel > 50 ){
+            if (cancelCount===1){isTouch=true;}
+            if (hoverCount.cancel > waitCount ){
                 closeMovie(htmlTags);
                 closePict(htmlTags);
                 hoverCount.cancel = 0;
             }
-            if (showMovieCount === 0
-                &&showPictCount === 0
-                &&cancelCount === 0) {
+            if (!isTouch) {
                 for (var cnt in hoverCount){
                     if (hoverCount.hasOwnProperty(cnt)){
                         hoverCount[cnt] = 0;
                     }
                 }
             }
+            /*
+             finger position
+             and hoverCount
+             */
+            var tmp = $("#"+htmlTags.openedId+" "+htmlTags.thumbImg+2).offset();
+            if (tmp!==null){
+            $("#point").text(Math.round(fingerPos[0])+": "+tmp.left+", "
+                             +Math.round(fingerPos[1])+": "+tmp.top+ ","
+                            + JSON.stringify(hoverCount));
+            }
+
             /*
              Draw the Finger
              */
@@ -305,7 +353,7 @@ function hoverCounter(canvasInstance, fingerPos, touchObj, touchCount){
         // Creating the path for the finger circle
         canvasInstance.beginPath();
         // Draw a full circle of radius 6 at the finger position
-        canvasInstance.arc(fingerPos[0], fingerPos[1], 25, 0, Math.PI*touchCount/25);
+        canvasInstance.arc(fingerPos[0], fingerPos[1], 25, 0, Math.PI*touchCount/waitCount*2);
         canvasInstance.stroke();
         return 1;
     }
@@ -333,19 +381,18 @@ function startMovie(){
 $(function () {
     $("#"+htmlTags.pictFirstId).click(
         function(){
-//            $("#"+htmlTags.pictFirstId).attr("id",htmlTags.pictSecondId);
+            console.log("click to open");
             openPicts(htmlTags);
-//            $("#"+htmlTags.pictSecondId).attr("id",htmlTags.openedId);
         }
     );
     $(htmlTags.cancelBtn).click(
         function(){
             if ($(htmlTags.cancelBtn).hasClass(htmlTags.movieClass)) {
+                console.log("movie close");
                 closeMovie(htmlTags);
             } else {
                 console.log("picture close");
                 closePict(htmlTags);
-//                $("#"+htmlTags.openedId).attr("id", htmlTags.pictFirstId);
             }
         }
     );
