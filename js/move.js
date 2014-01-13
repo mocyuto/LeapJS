@@ -73,7 +73,9 @@ var htmlTags = {
     pictSecondId:"openTarget",
     thumbId:"#rightTop",
     movieClass:"video",
-    cancelBtn:"img#cancelBtn"
+    cancelBtn:"img#cancelBtn",
+    lightbox:"div#lightbox",
+    lightboxCancel:"div.lb-closeContainer a.lb-close"
 }
 
 var hoverCount = {
@@ -187,28 +189,18 @@ controller.on( 'frame' , function( data ){
     frame = data;
     // Clearing the drawing from the previous frame
     c.clearRect( 0 , 0 , width , height );
-    /*
-    for( var i = 0; i < frame.gestures.length; i++ ){
-        console.log("2");
-        var gesture = frame.gestures[i];
-        var type = gesture.type;
-        if (type === "keyTap") {
-            console.log("keyTap");
-            showMovie("#rightTop","movie","img#cancelBtn");
-        }
-        else if(type === "screenTap") {
-            console.log("screenTap");
-            $(function(){$("#animeTarget").animate({left:"0",top:"0"});
-                        });
-        } else if (type === "circle") {
-            console.log("circle");
-        } else if (type==="swipe") {
-            console.log("swipe");
-        }
 
+    // if popup is visible, swipe to hide.
+    if ($(htmlTags.lightbox).css("display")!=="none"){
+        for( var i = 0; i < frame.gestures.length; i++ ){
+            var gesture = frame.gestures[i];
+            var type = gesture.type;
+            if (type==="swipe") {
+                console.log("swipe");
+                $(htmlTags.lightboxCancel).click();
+            }
+        }
     }
-     */
-
     for( var i=0; i < frame.hands.length; i++ ){
 
         // For each hand we define it
