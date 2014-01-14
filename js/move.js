@@ -99,16 +99,6 @@ function openPicts(tags){
             .stop(true,true)
             .animate({top:topPos + "px"});
 
-        /*
-        for(i = 0; i < length; i++) {
-            $(pictId + " " + tags.thumbImg + (i + 1))
-                .stop(true,true)
-                .animate({left:leftPos + "px", top:topPos + "px"})
-                .animate({left:stopPos + "px"});
-            leftPos += 5;
-            stopPos += 150;
-        }*/
-
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $(tags.cancelBtn).stop(true,true).show();
     });
@@ -243,6 +233,7 @@ controller.on( 'frame' , function( data ){
         // For each hand we define it
         var hand = frame.hands[i];
 
+        // $("#swipe").text(hand.palmVelocity);
         // and get its position, so that it can be passed through
         // for drawing the connections
         //var handPos = leapToScene( frame , hand.palmPosition );
@@ -258,6 +249,7 @@ controller.on( 'frame' , function( data ){
 
             // and get its position in Canvas
             var fingerPos = leapToScene( frame , finger.tipPosition );
+
             // object position
             function touchObject(tag,cancel){
                 var id = tag;
