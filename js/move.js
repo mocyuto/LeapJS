@@ -183,6 +183,54 @@ function closeMovie(tags) {
     });
 }
 
+/*
+* @return [x,y]
+* 1,0 : right
+* -1.0 : left
+* 0.1 : up
+* 0,-1 : bottom
+*/
+var swiper = controller.gesture("swipe");
+var tolerance = 50;
+swiper.update(function(g) {
+    var xTrans = g.translation()[0];
+    var yTrans = g.translation()[1];
+    if (Math.abs(xTrans) > tolerance || Math.abs(yTrans) > tolerance) {
+        var xDir = Math.abs(xTrans) > tolerance ? (xTrans > 0 ? -1 : 1) : 0;
+        var yDir = Math.abs(yTrans) > tolerance ? (yTrans < 0 ? -1 : 1) : 0;
+
+        if (xDir===0 && yDir===1){ // swipe up
+            removePopup();
+        } else if (xDir===0 && yDir===-1){ // swipe down
+
+        } else if (xDir===1 && yDir===0) { // swipe right
+            scrollImages("right");
+        } else if (xDir===-1 && yDir ===0){ // swipe left
+            scrollImages("left");
+        }
+    }
+});
+
+// if popup is visible, swipe to hide.
+var removePopup = function(){
+    if ($(htmlTags.lightbox).css("display")!=="none"){
+        $(htmlTags.lightboxCancel).click();
+    }
+}
+
+var scrollImages = _.debounce(function(direction){
+    var picts = "#" + htmlTags.openedId;
+    if ($(picts).length !== 0) {
+        if (direction === "left"){
+            console.log("swipe left");
+            $(picts).scrollTo({left:"+=50",top:"+=0"},"normal");
+        } else if (direction === "right"){
+            console.log("swipe right");
+            $(picts).scrollTo({left:"-=50",top:"+=0"},"normal");
+        }
+    }
+},200);
+
 // Tells the controller what to do every time it sees a frame
 controller.on( 'frame' , function( data ){
     // Assigning the data to the global frame object
@@ -190,17 +238,6 @@ controller.on( 'frame' , function( data ){
     // Clearing the drawing from the previous frame
     c.clearRect( 0 , 0 , width , height );
 
-    // if popup is visible, swipe to hide.
-    if ($(htmlTags.lightbox).css("display")!=="none"){
-        for( var i = 0; i < frame.gestures.length; i++ ){
-            var gesture = frame.gestures[i];
-            var type = gesture.type;
-            if (type==="swipe") {
-                console.log("swipe");
-                $(htmlTags.lightboxCancel).click();
-            }
-        }
-    }
     for( var i=0; i < frame.hands.length; i++ ){
 
         // For each hand we define it
@@ -309,7 +346,7 @@ controller.on( 'frame' , function( data ){
              and hoverCount
              */
             var tmp = $("#"+htmlTags.openedId+" "+htmlTags.thumbImg+2).offset();
-            if (tmp!==null){
+            if (tmp!==null&&false){
             $("#point").text(Math.round(fingerPos[0])+": "+tmp.left+", "
                              +Math.round(fingerPos[1])+": "+tmp.top+ ","
                             + JSON.stringify(hoverCount));
