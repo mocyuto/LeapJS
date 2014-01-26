@@ -75,7 +75,9 @@ var htmlTags = {
     movieClass:"video",
     cancelBtn:"img#cancelBtn",
     lightbox:"div#lightbox",
-    lightboxCancel:"div.lb-closeContainer a.lb-close"
+    lightboxCancel:"div.lb-closeContainer a.lb-close",
+    lightboxLeft:"a.lb-prev",
+    lightboxRight:"a.lb-next"
 }
 
 var hoverCount = {
@@ -98,16 +100,6 @@ function openPicts(tags){
         $(pictId)
             .stop(true,true)
             .animate({top:topPos + "px"});
-
-        /*
-        for(i = 0; i < length; i++) {
-            $(pictId + " " + tags.thumbImg + (i + 1))
-                .stop(true,true)
-                .animate({left:leftPos + "px", top:topPos + "px"})
-                .animate({left:stopPos + "px"});
-            leftPos += 5;
-            stopPos += 150;
-        }*/
 
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
         $(tags.cancelBtn).stop(true,true).show();
@@ -184,6 +176,7 @@ function closeMovie(tags) {
 }
 
 /*
+* swipe action
 * @return [x,y]
 * 1,0 : right
 * -1.0 : left
@@ -205,8 +198,10 @@ swiper.update(function(g) {
 
         } else if (xDir===1 && yDir===0) { // swipe right
             scrollImages("right");
+            nextImage("right");
         } else if (xDir===-1 && yDir ===0){ // swipe left
             scrollImages("left");
+            nextImage("left");
         }
     }
 });
@@ -218,15 +213,28 @@ var removePopup = function(){
     }
 }
 
+var nextImage = function(side){
+    if ($(htmlTags.lightbox).css("display")!=="none"){
+        if (side === "left" && $(htmlTags.lightboxLeft).css("display")!=="none") {
+            $(htmlTags.lightboxLeft).click();
+        } else if (side === "right" && $(htmlTags.lightboxRight).css("display")!=="none") {
+            $(htmlTags.lightboxRight).click();
+        }
+    }
+}
+
 var scrollImages = _.debounce(function(direction){
+    if ($(htmlTags.lightbox).css("display")!=="none"){
+        return false;
+    }
     var picts = "#" + htmlTags.openedId;
     if ($(picts).length !== 0) {
         if (direction === "left"){
             console.log("swipe left");
-            $(picts).scrollTo({left:"+=50",top:"+=0"},"normal");
+            $(picts).scrollTo({left:"+=100",top:"+=0"},"normal");
         } else if (direction === "right"){
             console.log("swipe right");
-            $(picts).scrollTo({left:"-=50",top:"+=0"},"normal");
+            $(picts).scrollTo({left:"-=100",top:"+=0"},"normal");
         }
     }
 },200);
