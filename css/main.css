@@ -1,0 +1,74 @@
+body {
+}
+#animeTarget img{
+    position:absolute;
+    top:5px;
+    left:5px;
+    width:150px;
+    height:100px;
+    background-color:blue;
+}
+#openTarget{
+    text-align: center;
+    position:absolute;
+}
+#openTarget img{
+    text-align: left;
+}
+#opened{
+    text-align: center;
+    position:absolute;
+    overflow:scroll;
+    white-space:nowrap;
+}
+div.trim{
+    display:inline;
+}
+div.trim img{
+    width:150px;
+    height:100px;
+    overflow:hidden;
+    posititon:relative;
+}
+#opened img{
+    text-align: left;
+    padding:5px;
+}
+#animeTarget img#leftTop2 {
+    top:10px;
+    left:10px;
+    background-color:yellow;
+}
+#animeTarget img#leftTop3 {
+    top:15px;
+    left:15px;
+    background-color:black;
+}
+img#cancelBtn {
+    position:absolute;
+    top:180px;
+    left:700px;
+    width:35px;
+    height:35px;
+    display:none;
+}
+img#rightTop{
+    position:absolute;
+    top:0px;
+    left:1000px;
+    width:100px;
+    height:100px;
+}
+#canvas{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-color: rgba(255,255,255,0.1);
+    z-index:10;
+}
+video {
+    visibility:hidden;
+    position:absolute;
+    left:300px;
+    top:30px;
+}
