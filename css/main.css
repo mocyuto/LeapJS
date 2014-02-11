@@ -1,5 +1,18 @@
 body {
 }
+p{
+    margin: 0 auto;
+    padding: 5px;
+    color: #616161 ;
+    font-family: "Osaka","メイリオ", 'Bevan', serif;
+    font-size: 30px ;
+    background: #3b3b3b ;
+    width: 350px;
+    text-align: center;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
 #animeTarget img{
     position:absolute;
     top:5px;

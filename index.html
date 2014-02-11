@@ -15,6 +15,11 @@
   <body>
     <canvas id="canvas"></canvas>
     <img id="cancelBtn" vertical-align="999" src="http://www.au.kddi.com/catalog/image/btn_modal_close.gif">
+    <p>
+      指をかざして <br />
+      写真にポインタを<br/>
+      合わせてみてください。
+    </p>
     <div id="animeTarget">
       <a href="img/hana3.png" data-lightbox="pict-list" title="下スワイプ：戻る、横スワイプ：次の画像">
           <img id="leftTop1" src="img/hana3.png">
@@ -55,9 +60,9 @@
     <img id="rightTop" src="img/hana3.png">
     <!-- http://www.mirovideoconverter.com -->
     <video autoplay controls width="640" height="400">
-      <source src="video/test.ogg">
-        <source src="video/test.m4v">
-          <source src="video/test.webm">
+      <source src="video/test.webm">
+        <source src="video/test.ogg">
+          <source src="video/test.m4v">
             <p>動画を再生するにはvideoタグをサポートしたブラウザが必要です。</p>
     </video>
     <div style="position:absolute;top:300px;">Finger:<span id="point"></span></div>
