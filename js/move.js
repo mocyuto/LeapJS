@@ -102,6 +102,7 @@ function openPicts(tags){
             .animate({top:topPos + "px"});
 
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
+        $("p").css("display","none");
         $(tags.cancelBtn).stop(true,true).show();
     });
     $(pictId).attr("id",tags.openedId)
@@ -155,6 +156,7 @@ function showMovie(tags){
                 video.play();
             },500);
         $("body").css("background-color","rgba(51, 51, 51, 0.8)");
+        $("p").css("display","none");
     });
 }
 
